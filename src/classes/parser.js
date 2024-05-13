@@ -15,72 +15,127 @@ class Parser {
         this.html = html;
         this.dom = new JSDOM(html);
     }
+    
     /**
-     * Consigue la sección del html que contiene todos los productos
-     * @returns {Element} Elemento que contiene todos los productos
-     */
-    getListSection() {
-        const result = this.dom.window.document.querySelector(".product-lineal-content");
-        return result;
-    }
-    /**
-     * Consigue todos los productos de la sección
-     * @param {Element} section Elemento que contiene todos los productos
+     * Consigue todos los anuncios
      * @returns {Array<Element>} Array de elementos que contienen los productos
      */
-    getItems(section) {
-        const results = section.querySelectorAll(".product-item");
+    getItems() {
+        const results = this.dom.window.document.querySelectorAll(".p-3.border.rounded.mb-3.bg-white");
         const resultsArray = Array.from(results);
         return resultsArray;
     }
 
     /**
-     * Consigue el título de un producto
-     * @param {Element} item Elemento que contiene el producto
-     * @returns {String} Título del producto
+     * Consigue el titulo de un anuncio
+     * @param {Element} item El elemento que contiene el anuncio
+     * @returns {String} El titulo del anuncio
      */
     getTitle(item) {
-        const result = item.querySelector(".product-title");
-        return result.textContent.trim();
+        const title = item.querySelector("a.font-weight-bold.text-cyan-700");
+        return title.textContent.trim();
     }
 
     /**
-     * Consigue el precio de un producto
-     * @param {Element} item Elemento que contiene el producto
-     * @returns {Number} Precio del producto
+     * Consigue el nombre de la empresa
+     * @param {Element} item El elemento que contiene el anuncio
+     * @returns {String} El nombre de la empresa
      */
-    getPrice(item) {
-        const result = item.querySelector(".price-offer-now");
-        const price = result.textContent.trim();
-        const priceNumber = parseFloat(price.replace(",", "."));
-        return priceNumber;
+    getCompany(item) {
+        const company = item.querySelector("a.text-primary.link-muted");
+        return company.textContent.trim();
+    }
+    
+    /**
+     * Consigue la info de la oferta
+     * @param {Element} item El elemento que contiene el anuncio
+     * @returns {Array<String>} La info de la oferta
+     */
+    getJobInfo(item) {
+        const jobInfo = item.querySelector(".text-right");
+        const html = jobInfo.innerHTML.trim();
+        // apply regex to split into array
+        const regex = /<.+?>/ig;
+        let results = html.split(regex);
+        results = results.map(result => result.trim());
+        const result = results.filter(result => result.length > 0 && result !="Actualizada");
+        return result;
+
     }
 
     /**
-     * Consigue la url de la imagen de un producto
-     * @param {Element} item Elemento que contiene el producto
-     * @returns {String} Url de la imagen del producto
+     * Consigue la fecha de la oferta
+     * @param {Array<String>} data La info de la oferta
+     * @returns {String} La fecha de la oferta
      */
-    getImage(item) {
-        const result = item.querySelector(".product-image img");
-        return result.src;
+    getPublishedDate(data) {
+        const publishedDate = data[0];
+       
+        return publishedDate;
     }
 
     /**
-     * Junta todos los métodos anteriores para conseguir un array de productos
-     * @returns {Array<Product>} Array de productos
+     * Consigue el salario de la oferta
+     * @param {Array<String>} data La info de la oferta
+     * @returns {String} El salario de la oferta
      */
-    getProducts() {
-        const section = this.getListSection();
-        const items = this.getItems(section);
-        const products = items.map(item => {
-            const nombre = this.getTitle(item);
-            const precio = this.getPrice(item);
-            const imagen = this.getImage(item);
-            return { nombre, precio, imagen };
-        })
-        return products;
+    getSalary(data) {
+        const salary = data.find(item => item.includes("€")) || "No disponible";
+        return salary;
+    }
+
+    /**
+     * Consigue la provincia de la oferta
+     * @param {Array<String>} data La info de la oferta
+     * @returns {String} La provincia de la oferta
+     */
+    getProvince(data) {
+        const province = data[1];
+        if(province.includes("remoto")){
+            return "No especificada";
+        }
+        return province;
+    }
+
+    /**
+     * Consigue el tipo de trabajo: remoto, híbrido, presencial...
+     * @param {Array<String>} data La info de la oferta
+     * @returns {String} El tipo de trabajo
+     */
+    getJobType(data) {
+        const jobType = data.find(item => item.toLowerCase().includes("remoto") || item.toLowerCase().includes("híbrido") || item.toLowerCase().includes("presencial")) || "No especificado";
+        return jobType.replace(/[\(\)]/g,"");
+    }
+
+    /**
+     * Consigue la descripción de la oferta
+     * @param {Element} item El elemento que contiene el anuncio
+     * @returns {String} La descripción de la oferta
+     */
+    getDescription(item) {
+        const description = item.querySelector(".hidden-md-down.text-gray-800");
+        return description.textContent.trim();
+    }
+
+    /**
+     * Consigue el link de la oferta
+     * @param {Element} item El elemento que contiene el anuncio
+     * @returns {String} El link de la oferta
+     */
+    getLink(item) {
+        const link = item.querySelector("a.font-weight-bold.text-cyan-700");
+        return link.href;
+    }
+
+    /**
+     * Consigue los tags de la oferta
+     * @param {Element} item El elemento que contiene el anuncio
+     * @returns {Array<String>} Los tags de la oferta
+     */
+    getTags(item) {
+        const tags = item.querySelectorAll(".badge");
+        const result = Array.from(tags).map(tag => tag.textContent.trim());
+        return Array.from(new Set(result));
     }
 }
-
 export default Parser;

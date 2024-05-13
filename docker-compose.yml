@@ -22,5 +22,7 @@ services:
     volumes:
       - ./:/app
       - node_modules_musica:/app/node_modules
+      - coverage:/app/coverage
 volumes:
   node_modules_musica:
+  coverage:

@@ -13,7 +13,7 @@ async function getAll(req,res){
 async function fetchJobs(req,res){
     const ScraperInstance = new Scraper();
 
-    const html = await ScraperInstance.getHtml(urls.indeed);
+    const html = await ScraperInstance.getHtml(urls.tecnoempleo);
     res.send(html);
 }
 

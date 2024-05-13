@@ -19,6 +19,6 @@ app.use(express.json());// configurar body parser para recibir datos en formato 
 
 app.use('/', router);// configurar rutas
 
-app.listen(3000, () => {
+app.listen(3008, () => {
     console.log(`Servidor escuchando en http://localhost:${process.env.APP_PORT}`);
 });// iniciar servidor en el puerto indicado en las variables de entorno

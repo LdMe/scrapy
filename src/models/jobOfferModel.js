@@ -5,7 +5,7 @@ const jobOfferSchema = new mongoose.Schema({
     company: String,
     province: String,
     jobType: String,
-    publishingDate:Date,
+    publishedDate:Date,
     description:String,
     contractType:String,
     workHours: String,
