@@ -1,0 +1,13 @@
+services:
+  mongo:
+    image: mongo:latest
+    restart: unless-stopped
+    container_name: scrapy_mongo
+    ports: 
+      - ${DB_PORT}:27017
+    volumes:
+      - ./data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${DB_NAME}
