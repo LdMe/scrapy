@@ -2,7 +2,7 @@ services:
   mongo:
     image: mongo:latest
     restart: unless-stopped
-    container_name: scrapy_mongo
+    container_name: ${DB_HOST}
     ports: 
       - ${DB_PORT}:27017
     volumes:
@@ -11,3 +11,16 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
       MONGO_INITDB_DATABASE: ${DB_NAME}
+  backend:
+    build: .
+    container_name: ${APP_HOST}
+    restart: unless-stopped
+    ports:
+      - ${APP_PORT}:3000
+    depends_on:
+      - mongo
+    volumes:
+      - ./:/app
+      - node_modules:/app/node_modules
+volumes:
+  node_modules:

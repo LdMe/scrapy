@@ -9,7 +9,7 @@ const jobOfferSchema = new mongoose.Schema({
     description:String,
     contractType:String,
     workHours: String,
-    salaryRange: String,
+    salary: String,
 });
 
 const JobOfferModel = mongoose.model("JobOffer",jobOfferSchema);
